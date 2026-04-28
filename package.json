@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "wrangler dev",
+    "build": "bun run build:css",
+    "build:css": "tailwindcss -i ./src/styles/globals.css -o ./public/assets/styles.css --minify",
     "deploy": "wrangler deploy",
     "check": "tsc --noEmit",
     "lint": "biome check .",
@@ -18,8 +20,11 @@
   "devDependencies": {
     "@biomejs/biome": "^2.4.13",
     "@cloudflare/vitest-pool-workers": "^0.15.0",
+    "@tailwindcss/cli": "^4.2.4",
     "@types/bun": "latest",
     "drizzle-kit": "^0.31.10",
+    "tailwindcss": "^4.2.4",
+    "tailwindcss-animate": "^1.0.7",
     "typescript": "^6.0.3",
     "vitest": "^4.1.5",
     "wrangler": "^4.85.0"

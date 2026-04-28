@@ -6,21 +6,27 @@ import {
 } from "./auth/middleware";
 import { authRoutes } from "./auth/routes";
 import type { AppEnv } from "./env";
+import { readTheme, writeTheme } from "./theme";
 import { loginPage, signupPage, verifyPage } from "./views/auth";
+import { dashboardPage } from "./views/dashboard";
+import { landingPage } from "./views/landing";
 
 const app = new Hono<{ Bindings: AppEnv; Variables: AppVariables }>();
 
 app.use("*", sessionMiddleware);
 
-app.get("/", (c) => c.text("Hello from chron0 link shortener."));
+app.get("/", (c) => c.html(landingPage({ theme: readTheme(c) })));
 app.get("/healthz", (c) => c.json({ ok: true }));
-app.get("/login", (c) => c.html(loginPage()));
-app.get("/signup", (c) => c.html(signupPage()));
-app.get("/verify", (c) => c.html(verifyPage()));
+app.get("/login", (c) => c.html(loginPage({ theme: readTheme(c) })));
+app.get("/signup", (c) => c.html(signupPage({ theme: readTheme(c) })));
+app.get("/verify", (c) => c.html(verifyPage({ theme: readTheme(c) })));
+app.post("/theme", async (c) => {
+  const body = await c.req.parseBody();
+  writeTheme(c, body.theme === "dark" ? "dark" : "light");
+  return c.redirect(c.req.header("referer") ?? "/");
+});
 app.get("/dashboard", requireSession, (c) =>
-  c.html(
-    "<!doctype html><title>Dashboard - chron0 links</title><h1>Dashboard</h1>",
-  ),
+  c.html(dashboardPage({ theme: readTheme(c) })),
 );
 
 app.route("/", authRoutes);

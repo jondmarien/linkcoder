@@ -8,7 +8,8 @@
       "!.vscode",
       "!node_modules",
       "!dist",
-      "!.wrangler"
+      "!.wrangler",
+      "!public/assets"
     ]
   },
   "formatter": {
@@ -26,6 +27,11 @@
     "formatter": {
       "quoteStyle": "double",
       "semicolons": "always"
+    }
+  },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
     }
   }
 }
