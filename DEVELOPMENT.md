@@ -123,6 +123,20 @@ bunx wrangler secret put ANALYTICS_API_TOKEN
 If this is missing, redirects still write click events, but dashboard analytics
 queries return empty data.
 
+### Admin Emails
+
+Comma-separated list of email addresses promoted to `admin` on sign-in.
+
+```sh
+bunx wrangler secret put ADMIN_EMAILS
+```
+
+Example value:
+
+```text
+you@example.com,other-admin@example.com
+```
+
 ## Local Environment
 
 Copy the example file and fill in local values:
@@ -169,6 +183,7 @@ Apply migrations remotely:
 
 ```sh
 bun run db:migrate:remote
+
 ```
 
 ## Verification

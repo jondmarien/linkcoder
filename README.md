@@ -31,8 +31,10 @@ Implemented:
   abuse reports, and create/report rate limit enforcement.
 - Redirect click ingestion into Analytics Engine, owner-only analytics API, and
   link detail pages with uPlot chart scaffolding.
+- Admin email promotion, protected review queue, approve/disable actions, and
+  nightly cron rescans for old clean links.
 
-Next planned phase: admin review queue and cron rescans.
+Next planned phase: expiration polish and static policy/help pages.
 
 ## Architecture
 

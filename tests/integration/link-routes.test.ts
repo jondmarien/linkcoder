@@ -56,6 +56,16 @@ describe("link routes", () => {
     expect(response.status).toBe(401);
   });
 
+  it("renders the create link page at /links/new", async () => {
+    const response = await app.request("/links/new", undefined, env);
+    const html = await response.text();
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("content-type")).toContain("text/html");
+    expect(html).toContain("Create a short link");
+    expect(html).not.toContain('"error":"Link not found."');
+  });
+
   it("redirects from D1 and writes the KV cache on miss", async () => {
     await seedLink("go1234", "https://example.com/page");
 

@@ -1,4 +1,6 @@
 import { createMiddleware } from "hono/factory";
+import { promoteAdminIfConfigured } from "../admin/auth";
+import { createDb } from "../db/client";
 import type { AppEnv } from "../env";
 import { createAuth } from ".";
 
@@ -28,6 +30,11 @@ export const sessionMiddleware = createMiddleware<{
     headers: c.req.raw.headers,
   });
   c.set("session", session);
+  await promoteAdminIfConfigured({
+    db: createDb(c.env.DB),
+    env: c.env,
+    user: session?.user,
+  });
 
   return next();
 });

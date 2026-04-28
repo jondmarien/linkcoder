@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { adminRoutes } from "./admin/routes";
 import { analyticsRoutes } from "./analytics/routes";
 import {
   type AppVariables,
@@ -6,6 +7,7 @@ import {
   sessionMiddleware,
 } from "./auth/middleware";
 import { authRoutes } from "./auth/routes";
+import { scheduled } from "./cron";
 import type { AppEnv } from "./env";
 import { linkRoutes } from "./links/routes";
 import { handleRedirect } from "./redirect/handler";
@@ -34,9 +36,10 @@ app.get("/dashboard", requireSession, (c) =>
 );
 
 app.route("/", authRoutes);
-app.route("/", analyticsRoutes);
+app.route("/", adminRoutes);
 app.route("/", linkRoutes);
+app.route("/", analyticsRoutes);
 app.route("/", reportRoutes);
 app.get("/:slug", handleRedirect);
 
-export default app;
+export default Object.assign(app, { scheduled });

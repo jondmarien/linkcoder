@@ -1,7 +1,9 @@
 import { Hono } from "hono";
 import { createDb } from "../db/client";
 import { checkRateLimit, getClientIp } from "../rate-limit";
+import { readTheme } from "../theme";
 import type { HonoAppEnv } from "../types";
+import { newLinkPage } from "../views/new-link";
 import { toCachedLink, writeSlugCache } from "./cache";
 import { createLink, generateUniqueSlug, slugExists } from "./repository";
 import { scanDestinationUrl } from "./scan";
@@ -14,6 +16,10 @@ type CreateLinkBody = {
 };
 
 export const linkRoutes = new Hono<HonoAppEnv>();
+
+linkRoutes.get("/links/new", (c) =>
+  c.html(newLinkPage({ theme: readTheme(c) })),
+);
 
 const parseCreateBody = async (request: Request): Promise<CreateLinkBody> => {
   const contentType = request.headers.get("content-type") ?? "";
