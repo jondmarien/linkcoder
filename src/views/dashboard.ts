@@ -29,14 +29,16 @@ export const dashboardPage = ({ theme }: { theme: Theme }) =>
         </div>
       </section>
       <section class="${cardClass("overflow-hidden py-0")}">
-        <div class="grid grid-cols-[1fr_auto_auto] gap-4 border-b px-6 py-4 text-sm font-medium text-muted-foreground">
+        <div class="grid grid-cols-[1fr_auto_auto_auto] gap-4 border-b px-6 py-4 text-sm font-medium text-muted-foreground">
           <span>Short link</span>
           <span>Status</span>
+          <span>Expires</span>
           <span>Clicks</span>
         </div>
-        <div class="grid grid-cols-[1fr_auto_auto] gap-4 px-6 py-5 text-sm">
+        <div class="grid grid-cols-[1fr_auto_auto_auto] gap-4 px-6 py-5 text-sm">
           <span class="font-mono">No links yet</span>
           <span class="rounded-full bg-secondary px-2 py-1 text-secondary-foreground">Ready</span>
+          <span class="text-muted-foreground">No expiration</span>
           <span>0</span>
         </div>
       </section>

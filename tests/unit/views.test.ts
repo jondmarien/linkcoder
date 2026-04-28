@@ -8,5 +8,7 @@ describe("dashboard view", () => {
     expect(html).toContain("Your links");
     expect(html).toContain("Create a short link");
     expect(html).toContain("Clicks");
+    expect(html).toContain("Expires");
+    expect(html).toContain("No expiration");
   });
 });

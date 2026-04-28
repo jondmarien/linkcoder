@@ -33,8 +33,10 @@ Implemented:
   link detail pages with uPlot chart scaffolding.
 - Admin email promotion, protected review queue, approve/disable actions, and
   nightly cron rescans for old clean links.
+- Expiration UI polish, Terms/Privacy/Help pages, robots.txt, sitemap.xml, and
+  launch smoke-test checklist.
 
-Next planned phase: expiration polish and static policy/help pages.
+Next planned phase: launch verification and release polish.
 
 ## Architecture
 

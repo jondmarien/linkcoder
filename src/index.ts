@@ -16,6 +16,13 @@ import { readTheme, writeTheme } from "./theme";
 import { loginPage, signupPage, verifyPage } from "./views/auth";
 import { dashboardPage } from "./views/dashboard";
 import { landingPage } from "./views/landing";
+import {
+  helpPage,
+  privacyPage,
+  robotsTxt,
+  sitemapXml,
+  termsPage,
+} from "./views/static-pages";
 
 const app = new Hono<{ Bindings: AppEnv; Variables: AppVariables }>();
 
@@ -26,6 +33,13 @@ app.get("/healthz", (c) => c.json({ ok: true }));
 app.get("/login", (c) => c.html(loginPage({ theme: readTheme(c) })));
 app.get("/signup", (c) => c.html(signupPage({ theme: readTheme(c) })));
 app.get("/verify", (c) => c.html(verifyPage({ theme: readTheme(c) })));
+app.get("/terms", (c) => c.html(termsPage({ theme: readTheme(c) })));
+app.get("/privacy", (c) => c.html(privacyPage({ theme: readTheme(c) })));
+app.get("/help", (c) => c.html(helpPage({ theme: readTheme(c) })));
+app.get("/robots.txt", (c) => c.text(robotsTxt));
+app.get("/sitemap.xml", (c) =>
+  c.body(sitemapXml, 200, { "content-type": "application/xml; charset=utf-8" }),
+);
 app.post("/theme", async (c) => {
   const body = await c.req.parseBody();
   writeTheme(c, body.theme === "dark" ? "dark" : "light");

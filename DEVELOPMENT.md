@@ -196,6 +196,23 @@ bun run test
 bunx wrangler deploy --dry-run
 ```
 
+## Smoke Test Checklist
+
+Run this after deploying a production build:
+
+- Visit `https://link.chron0.tech/` and confirm the landing page loads.
+- Sign in with Google or request a magic link.
+- Verify the account email before testing public redirects.
+- Create a short link from `/links/new`.
+- Verify redirect by opening the generated short URL in a private window.
+- Open the dashboard and confirm the link appears with click count and
+  expiration state.
+- Open the link detail page and confirm the analytics chart shell loads.
+- Submit a test report from `/report`.
+- If logged in as an admin, open `/admin/review` and confirm reported links
+  appear.
+- Check `/robots.txt`, `/sitemap.xml`, `/terms`, `/privacy`, and `/help`.
+
 ## Deploy
 
 After secrets are set:
