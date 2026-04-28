@@ -12,6 +12,12 @@ describe("health endpoint", () => {
     expect(html).toContain('href="/assets/styles.css"');
     expect(html).toContain('rel="icon"');
     expect(html).toContain('href="/favicon.svg"');
+    expect(html).toContain('property="og:title"');
+    expect(html).toContain('content="Short links with a longer memory."');
+    expect(html).toContain('property="og:image"');
+    expect(html).toContain('content="https://link.chron0.tech/og-image.svg"');
+    expect(html).toContain('name="twitter:card" content="summary_large_image"');
+    expect(html).toContain('href="https://link.chron0.tech/"');
     expect(html).toContain("Short links with a longer memory");
     expect(html).toContain("data-theme-toggle");
   });

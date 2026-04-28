@@ -38,7 +38,13 @@ app.use("*", async (c, next) => {
 });
 
 app.get("/", (c) =>
-  c.html(landingPage({ theme: readTheme(c), user: c.get("session")?.user })),
+  c.html(
+    landingPage({
+      appOrigin: c.env?.APP_ORIGIN ?? "https://link.chron0.tech",
+      theme: readTheme(c),
+      user: c.get("session")?.user,
+    }),
+  ),
 );
 app.get("/healthz", (c) => c.json({ ok: true }));
 app.get("/login", (c) =>

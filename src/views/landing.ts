@@ -9,9 +9,11 @@ type LandingUser = {
 };
 
 export const landingPage = ({
+  appOrigin = "https://link.chron0.tech",
   theme,
   user,
 }: {
+  appOrigin?: string;
   theme: Theme;
   user?: LandingUser | null;
 }) => {
@@ -21,6 +23,15 @@ export const landingPage = ({
 
   return page({
     title: "Short links",
+    meta: {
+      description:
+        "Short links that keep redirects fast at the edge while tracking ownership, review, and click history.",
+      image: new URL("/og-image.svg", appOrigin).toString(),
+      imageAlt:
+        "chron0 links preview card with a short link and edge analytics.",
+      title: "Short links with a longer memory.",
+      url: new URL("/", appOrigin).toString(),
+    },
     theme,
     user,
     body: `<main class="grid flex-1 items-center gap-12 py-16 md:grid-cols-[1.15fr_0.85fr]">

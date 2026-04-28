@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { LinkRecord } from "../../src/links/repository";
 import { dashboardPage } from "../../src/views/dashboard";
+import { landingPage } from "../../src/views/landing";
 import { linkDetailPage } from "../../src/views/link-detail";
 import { newLinkPage } from "../../src/views/new-link";
 
@@ -106,5 +107,19 @@ describe("new link view", () => {
     expect(html).toContain('data-default-expiration="');
     expect(html).toContain('name="expires_at" type="datetime-local"');
     expect(html).toContain("disabled");
+  });
+});
+
+describe("landing view metadata", () => {
+  it("renders rich social embed metadata", () => {
+    const html = landingPage({
+      appOrigin: "https://link.chron0.tech",
+      theme: "dark",
+    }).toString();
+
+    expect(html).toContain('property="og:title"');
+    expect(html).toContain('property="og:description"');
+    expect(html).toContain('property="og:image"');
+    expect(html).toContain('name="twitter:card" content="summary_large_image"');
   });
 });
