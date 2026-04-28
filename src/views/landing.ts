@@ -3,10 +3,26 @@ import { buttonClass } from "../ui/button";
 import { cardClass } from "../ui/card";
 import { page } from "./layout";
 
-export const landingPage = ({ theme }: { theme: Theme }) =>
-  page({
+type LandingUser = {
+  email?: string | null;
+  name?: string | null;
+};
+
+export const landingPage = ({
+  theme,
+  user,
+}: {
+  theme: Theme;
+  user?: LandingUser | null;
+}) => {
+  const primaryHref = user ? "/links/new" : "/signup";
+  const secondaryHref = user ? "/dashboard" : "/login";
+  const secondaryLabel = user ? "Dashboard" : "Log in";
+
+  return page({
     title: "Short links",
     theme,
+    user,
     body: `<main class="grid flex-1 items-center gap-12 py-16 md:grid-cols-[1.15fr_0.85fr]">
       <section class="space-y-8">
         <div class="inline-flex rounded-full border bg-secondary px-3 py-1 text-xs font-medium text-secondary-foreground">
@@ -21,8 +37,8 @@ export const landingPage = ({ theme }: { theme: Theme }) =>
           </p>
         </div>
         <div class="flex flex-wrap gap-3">
-          <a class="${buttonClass("default", "lg")}" href="/signup">Start shortening</a>
-          <a class="${buttonClass("outline", "lg")}" href="/login">Log in</a>
+          <a class="${buttonClass("default", "lg")}" href="${primaryHref}">Start shortening</a>
+          <a class="${buttonClass("outline", "lg")}" href="${secondaryHref}">${secondaryLabel}</a>
         </div>
       </section>
       <section class="${cardClass("relative overflow-hidden")}">
@@ -50,3 +66,4 @@ export const landingPage = ({ theme }: { theme: Theme }) =>
       </section>
     </main>`,
   });
+};

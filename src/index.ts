@@ -37,10 +37,20 @@ app.use("*", async (c, next) => {
   }
 });
 
-app.get("/", (c) => c.html(landingPage({ theme: readTheme(c) })));
+app.get("/", (c) =>
+  c.html(landingPage({ theme: readTheme(c), user: c.get("session")?.user })),
+);
 app.get("/healthz", (c) => c.json({ ok: true }));
-app.get("/login", (c) => c.html(loginPage({ theme: readTheme(c) })));
-app.get("/signup", (c) => c.html(signupPage({ theme: readTheme(c) })));
+app.get("/login", (c) =>
+  c.get("session")
+    ? c.redirect("/dashboard")
+    : c.html(loginPage({ theme: readTheme(c) })),
+);
+app.get("/signup", (c) =>
+  c.get("session")
+    ? c.redirect("/dashboard")
+    : c.html(signupPage({ theme: readTheme(c) })),
+);
 app.get("/verify", (c) => c.html(verifyPage({ theme: readTheme(c) })));
 app.get("/terms", (c) => c.html(termsPage({ theme: readTheme(c) })));
 app.get("/privacy", (c) => c.html(privacyPage({ theme: readTheme(c) })));

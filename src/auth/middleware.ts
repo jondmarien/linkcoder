@@ -12,7 +12,10 @@ export type AppVariables = {
 };
 
 const shouldLoadSession = (path: string) =>
+  path === "/" ||
   path === "/dashboard" ||
+  path === "/login" ||
+  path === "/signup" ||
   path.startsWith("/links") ||
   path.startsWith("/api/links") ||
   path.startsWith("/api/analytics") ||
@@ -22,7 +25,7 @@ export const sessionMiddleware = createMiddleware<{
   Bindings: AppEnv;
   Variables: AppVariables;
 }>(async (c, next) => {
-  if (!shouldLoadSession(c.req.path)) {
+  if (!shouldLoadSession(c.req.path) || !c.env?.DB || !c.env.APP_ORIGIN) {
     return next();
   }
 
