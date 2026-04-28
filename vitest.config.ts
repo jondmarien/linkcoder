@@ -22,6 +22,8 @@ export default defineConfig(async () => {
         miniflare: {
           bindings: {
             BETTER_AUTH_SECRET: "test-only-better-auth-secret-32-characters",
+            EMAIL_DELIVERY_DISABLED: "true",
+            RESEND_API_KEY: "",
             TEST_MIGRATIONS: migrations,
           },
         },

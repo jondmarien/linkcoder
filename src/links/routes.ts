@@ -36,10 +36,20 @@ const parseCreateBody = async (request: Request): Promise<CreateLinkBody> => {
   };
 };
 
+const isBrowserFormPost = (request: Request) =>
+  (request.headers.get("content-type") ?? "").includes(
+    "application/x-www-form-urlencoded",
+  );
+
 linkRoutes.post("/api/links", async (c) => {
   const session = c.get("session");
+  const browserFormPost = isBrowserFormPost(c.req.raw);
 
   if (!session) {
+    if (browserFormPost) {
+      return c.redirect("/login");
+    }
+
     return c.json({ error: "Authentication required." }, 401);
   }
 
@@ -125,6 +135,10 @@ linkRoutes.post("/api/links", async (c) => {
     slug,
     toCachedLink(link, slug, Boolean(session.user.emailVerified)),
   );
+
+  if (browserFormPost) {
+    return c.redirect(`/links/${link.slug}`);
+  }
 
   return c.json(
     {

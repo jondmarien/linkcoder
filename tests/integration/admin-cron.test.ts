@@ -113,4 +113,30 @@ describe("admin review and cron", () => {
     expect(rescanned?.scan_status).toBe("malicious");
     expect(rescanned?.disabled_reason).toBe("malicious_rescan");
   });
+
+  it("does not downgrade clean links when a rescan is inconclusive", async () => {
+    await seedLink("pendingclean", "clean");
+
+    await rescanOldestCleanLinks({
+      db: createDb(env.DB),
+      env,
+      fetcher: async (input: RequestInfo | URL) => {
+        const url = String(input);
+
+        if (url.endsWith("/urlscanner/v2/scan")) {
+          return Response.json({ uuid: "scan-id" });
+        }
+
+        return new Response("not ready", { status: 404 });
+      },
+      limit: 10,
+    });
+
+    const rescanned = await env.DB.prepare(
+      "SELECT scan_status, disabled_reason FROM links WHERE slug = 'pendingclean'",
+    ).first<{ scan_status: string; disabled_reason: string | null }>();
+
+    expect(rescanned?.scan_status).toBe("clean");
+    expect(rescanned?.disabled_reason).toBeNull();
+  });
 });

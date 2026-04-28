@@ -103,18 +103,37 @@ export const rescanOldestCleanLinks = async ({
 
   for (const link of candidates) {
     const scan = await scanDestinationUrl({ env, fetcher, url: link.url });
-    const update = {
-      scanStatus: scan.status,
-      scanVerdictJson: JSON.stringify(scan.verdict),
-      lastScannedAt: new Date(),
-      disabledAt: scan.status === "malicious" ? new Date() : link.disabledAt,
-      disabledReason:
-        scan.status === "malicious" ? "malicious_rescan" : link.disabledReason,
-    };
+    const now = new Date();
 
-    await db.update(links).set(update).where(eq(links.id, link.id));
+    if (scan.status === "malicious") {
+      await db
+        .update(links)
+        .set({
+          scanStatus: "malicious",
+          scanVerdictJson: JSON.stringify(scan.verdict),
+          lastScannedAt: now,
+          disabledAt: now,
+          disabledReason: "malicious_rescan",
+        })
+        .where(eq(links.id, link.id));
 
-    if (env.LINKS_KV && scan.status !== "clean") {
+      if (env.LINKS_KV) {
+        await env.LINKS_KV.delete(slugCacheKey(link.slug));
+      }
+
+      continue;
+    }
+
+    await db
+      .update(links)
+      .set({
+        scanStatus: "clean",
+        scanVerdictJson: JSON.stringify(scan.verdict),
+        lastScannedAt: now,
+      })
+      .where(eq(links.id, link.id));
+
+    if (env.LINKS_KV && scan.status === "clean") {
       await env.LINKS_KV.delete(slugCacheKey(link.slug));
     }
   }

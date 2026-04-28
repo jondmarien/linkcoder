@@ -2,9 +2,8 @@ import type { AppEnv } from "../env";
 
 type ScanStatus = "clean" | "suspicious" | "malicious";
 
-type ScannerEnv = Pick<
-  AppEnv,
-  "CLOUDFLARE_ACCOUNT_ID" | "URL_SCANNER_API_TOKEN"
+type ScannerEnv = Partial<
+  Pick<AppEnv, "CLOUDFLARE_ACCOUNT_ID" | "URL_SCANNER_API_TOKEN">
 >;
 
 type ScanDestinationUrlOptions = {

@@ -9,6 +9,10 @@ export const sendMagicLinkEmail = async (
   env: AppEnv,
   { email, url }: MagicLinkEmail,
 ) => {
+  if (env.EMAIL_DELIVERY_DISABLED === "true") {
+    return;
+  }
+
   if (!env.RESEND_API_KEY) {
     if (env.ENVIRONMENT === "production") {
       throw new Error("RESEND_API_KEY is required to send magic links.");

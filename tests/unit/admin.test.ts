@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { isAdminEmail, parseAdminEmails } from "../../src/admin/auth";
+import {
+  isAdminEmail,
+  parseAdminEmails,
+  shouldPromoteAdmin,
+} from "../../src/admin/auth";
 
 describe("admin auth helpers", () => {
   it("parses admin emails from a comma-separated environment value", () => {
@@ -11,5 +15,14 @@ describe("admin auth helpers", () => {
   it("checks admin emails case-insensitively", () => {
     expect(isAdminEmail("ADMIN@example.com", "admin@example.com")).toBe(true);
     expect(isAdminEmail("user@example.com", "admin@example.com")).toBe(false);
+  });
+
+  it("does not promote users already marked as admin", () => {
+    expect(
+      shouldPromoteAdmin(
+        { email: "admin@example.com", role: "admin" },
+        "admin@example.com",
+      ),
+    ).toBe(false);
   });
 });

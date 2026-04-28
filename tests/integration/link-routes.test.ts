@@ -56,6 +56,21 @@ describe("link routes", () => {
     expect(response.status).toBe(401);
   });
 
+  it("redirects unauthenticated browser create form posts to login", async () => {
+    const response = await app.request(
+      "/api/links",
+      {
+        method: "POST",
+        headers: { "content-type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({ url: "https://example.com" }),
+      },
+      env,
+    );
+
+    expect(response.status).toBe(302);
+    expect(response.headers.get("location")).toBe("/login");
+  });
+
   it("renders the create link page at /links/new", async () => {
     const response = await app.request("/links/new", undefined, env);
     const html = await response.text();

@@ -14,6 +14,14 @@ export const isAdminEmail = (
   value?: string,
 ) => Boolean(email && parseAdminEmails(value).includes(email.toLowerCase()));
 
+export const shouldPromoteAdmin = (
+  user: { email?: string | null; role?: string | null } | null | undefined,
+  adminEmails?: string,
+) =>
+  Boolean(
+    user && user.role !== "admin" && isAdminEmail(user.email, adminEmails),
+  );
+
 export const promoteAdminIfConfigured = async ({
   db,
   env,
@@ -24,6 +32,12 @@ export const promoteAdminIfConfigured = async ({
   user: { id: string; email?: string | null } | null | undefined;
 }) => {
   if (!user || !isAdminEmail(user.email, env.ADMIN_EMAILS)) {
+    return;
+  }
+
+  const currentRole = await getUserRole(db, user.id);
+
+  if (!shouldPromoteAdmin({ ...user, role: currentRole }, env.ADMIN_EMAILS)) {
     return;
   }
 
