@@ -1,6 +1,6 @@
 import type { AppEnv } from "../env";
 
-type ScanStatus = "clean" | "suspicious" | "malicious";
+type ScanStatus = "pending" | "clean" | "suspicious" | "malicious";
 
 type ScannerEnv = Partial<
   Pick<AppEnv, "CLOUDFLARE_ACCOUNT_ID" | "URL_SCANNER_API_TOKEN">
@@ -37,7 +37,7 @@ export const scanDestinationUrl = async ({
 }: ScanDestinationUrlOptions): Promise<UrlScanResult> => {
   if (!env.CLOUDFLARE_ACCOUNT_ID || !env.URL_SCANNER_API_TOKEN) {
     return {
-      status: "suspicious",
+      status: "pending",
       verdict: {
         provider: "cloudflare_url_scanner",
         reason: "scanner_not_configured",
@@ -88,7 +88,7 @@ export const scanDestinationUrl = async ({
 
   if (resultResponse.status === 404) {
     return {
-      status: "suspicious",
+      status: "pending",
       verdict: {
         provider: "cloudflare_url_scanner",
         reason: "scan_pending",

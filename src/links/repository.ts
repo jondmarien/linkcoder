@@ -14,6 +14,11 @@ export type CreateLinkInput = {
   scanVerdictJson?: string | null;
 };
 
+export type UpdateLinkScanInput = {
+  scanStatus: "pending" | "clean" | "suspicious" | "malicious";
+  scanVerdictJson: string;
+};
+
 export const getLinkBySlug = async (db: Db, slug: string) => {
   const [link] = await db.select().from(links).where(eq(links.slug, slug));
   return link ?? null;
@@ -83,6 +88,21 @@ export const createLink = async (db: Db, input: CreateLinkInput) => {
   }
 
   return link;
+};
+
+export const updateLinkScan = async (
+  db: Db,
+  slug: string,
+  input: UpdateLinkScanInput,
+) => {
+  await db
+    .update(links)
+    .set({
+      lastScannedAt: new Date(),
+      scanStatus: input.scanStatus,
+      scanVerdictJson: input.scanVerdictJson,
+    })
+    .where(eq(links.slug, slug));
 };
 
 export const incrementLinkClicks = async (db: Db, slug: string) => {

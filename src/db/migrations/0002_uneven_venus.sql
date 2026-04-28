@@ -1,1 +1,0 @@
-ALTER TABLE `links` ADD `click_count` integer DEFAULT 0 NOT NULL;

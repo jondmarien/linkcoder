@@ -11,6 +11,11 @@ import { createDb } from "../../src/db/client";
 import { slugCacheKey } from "../../src/links/cache";
 
 const now = Date.now();
+const scannerEnv = {
+  ...env,
+  CLOUDFLARE_ACCOUNT_ID: "test-account",
+  URL_SCANNER_API_TOKEN: "test-token",
+};
 
 const seedUser = async (id: string) => {
   await env.DB.prepare(
@@ -91,7 +96,7 @@ describe("admin review and cron", () => {
   it("rescans old clean links and disables malicious destinations", async () => {
     await rescanOldestCleanLinks({
       db: createDb(env.DB),
-      env,
+      env: scannerEnv,
       fetcher: async (input: RequestInfo | URL) => {
         const url = String(input);
 
@@ -119,7 +124,7 @@ describe("admin review and cron", () => {
 
     await rescanOldestCleanLinks({
       db: createDb(env.DB),
-      env,
+      env: scannerEnv,
       fetcher: async (input: RequestInfo | URL) => {
         const url = String(input);
 

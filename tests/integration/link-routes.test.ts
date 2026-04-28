@@ -62,13 +62,15 @@ const seedLink = async (
   options: {
     disabledAt?: number | null;
     expiresAt?: number | null;
+    scanStatus?: "pending" | "clean" | "suspicious" | "malicious";
+    scanVerdictJson?: string | null;
     userId?: string;
   } = {},
 ) => {
   const userId = options.userId ?? `user-${slug}`;
   await seedUser(userId);
   await env.DB.prepare(
-    "INSERT OR REPLACE INTO links (id, slug, url, user_id, created_at, expires_at, disabled_at, disabled_reason, scan_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'clean')",
+    "INSERT OR REPLACE INTO links (id, slug, url, user_id, created_at, expires_at, disabled_at, disabled_reason, scan_status, scan_verdict_json, last_scanned_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
   )
     .bind(
       `link-${slug}`,
@@ -79,6 +81,9 @@ const seedLink = async (
       options.expiresAt ?? null,
       options.disabledAt ?? null,
       options.disabledAt ? "test disabled" : null,
+      options.scanStatus ?? "clean",
+      options.scanVerdictJson ?? null,
+      now,
     )
     .run();
   await env.LINKS_KV.delete(`slug:${slug}`);
@@ -213,6 +218,34 @@ describe("link routes", () => {
 
     expect(response.status).toBe(302);
     expect(row?.click_count).toBe(1);
+  });
+
+  it("rescans an owned link and keeps pending scans visible as reviewing", async () => {
+    const user = await seedAuthenticatedUser("rescan-user");
+    await seedLink("rescan1", "https://example.com/rescan", {
+      scanStatus: "suspicious",
+      scanVerdictJson: JSON.stringify({ reason: "scan_submit_failed" }),
+      userId: user.id,
+    });
+
+    const response = await app.request(
+      "/links/rescan1/rescan",
+      {
+        method: "POST",
+        headers: user.headers,
+      },
+      env,
+    );
+    const row = await env.DB.prepare(
+      "SELECT scan_status, scan_verdict_json FROM links WHERE slug = ?",
+    )
+      .bind("rescan1")
+      .first<{ scan_status: string; scan_verdict_json: string }>();
+
+    expect(response.status).toBe(302);
+    expect(response.headers.get("location")).toBe("/links/rescan1");
+    expect(row?.scan_status).toBe("pending");
+    expect(row?.scan_verdict_json).toContain("scanner_not_configured");
   });
 
   it("renders friendly not-found and expired pages", async () => {

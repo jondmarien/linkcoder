@@ -30,7 +30,7 @@ describe("URL scanner", () => {
     expect(result.verdict.malicious).toBe(true);
   });
 
-  it("marks pending scanner results as suspicious for review", async () => {
+  it("marks pending scanner results as pending review", async () => {
     const fetcher = async (input: RequestInfo | URL) => {
       const url = String(input);
 
@@ -47,18 +47,18 @@ describe("URL scanner", () => {
       url: "https://pending.example",
     });
 
-    expect(result.status).toBe("suspicious");
+    expect(result.status).toBe("pending");
     expect(result.verdict.reason).toBe("scan_pending");
   });
 
-  it("marks links suspicious when scanner credentials are missing", async () => {
+  it("marks links pending review when scanner credentials are missing", async () => {
     const result = await scanDestinationUrl({
       env: {},
       fetcher: fetch,
       url: "https://unknown.example",
     });
 
-    expect(result.status).toBe("suspicious");
+    expect(result.status).toBe("pending");
     expect(result.verdict.reason).toBe("scanner_not_configured");
   });
 });

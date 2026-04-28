@@ -5,7 +5,13 @@ import { readTheme } from "../theme";
 import type { HonoAppEnv } from "../types";
 import { newLinkPage } from "../views/new-link";
 import { toCachedLink, writeSlugCache } from "./cache";
-import { createLink, generateUniqueSlug, slugExists } from "./repository";
+import {
+  createLink,
+  generateUniqueSlug,
+  getLinkBySlug,
+  slugExists,
+  updateLinkScan,
+} from "./repository";
 import { scanDestinationUrl } from "./scan";
 import { isValidCustomSlug, normalizeDestinationUrl } from "./slug";
 
@@ -151,4 +157,36 @@ linkRoutes.post("/api/links", async (c) => {
     },
     201,
   );
+});
+
+linkRoutes.post("/links/:slug/rescan", async (c) => {
+  const session = c.get("session");
+
+  if (!session) {
+    return c.redirect("/login");
+  }
+
+  const slug = c.req.param("slug");
+  const db = createDb(c.env.DB);
+  const link = await getLinkBySlug(db, slug);
+
+  if (!link || link.userId !== session.user.id) {
+    return c.json({ error: "Link not found." }, 404);
+  }
+
+  const scan = await scanDestinationUrl({
+    env: c.env,
+    fetcher: fetch,
+    url: link.url,
+  });
+  await updateLinkScan(db, slug, {
+    scanStatus: scan.status,
+    scanVerdictJson: JSON.stringify(scan.verdict),
+  });
+
+  if (scan.status === "malicious") {
+    await c.env.LINKS_KV.delete(`slug:${slug}`);
+  }
+
+  return c.redirect(`/links/${slug}`);
 });

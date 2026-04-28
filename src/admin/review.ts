@@ -127,7 +127,7 @@ export const rescanOldestCleanLinks = async ({
     await db
       .update(links)
       .set({
-        scanStatus: "clean",
+        scanStatus: scan.status === "clean" ? "clean" : link.scanStatus,
         scanVerdictJson: JSON.stringify(scan.verdict),
         lastScannedAt: now,
       })

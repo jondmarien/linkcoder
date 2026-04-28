@@ -1,4 +1,5 @@
 import type { LinkRecord } from "../links/repository";
+import { scanDisplay } from "../links/scan-status";
 import type { Theme } from "../theme";
 import { buttonClass } from "../ui/button";
 import { cardClass } from "../ui/card";
@@ -13,7 +14,14 @@ type DashboardUser = {
 
 type DashboardLink = Pick<
   LinkRecord,
-  "clickCount" | "disabledAt" | "expiresAt" | "scanStatus" | "slug" | "url"
+  | "clickCount"
+  | "disabledAt"
+  | "expiresAt"
+  | "lastScannedAt"
+  | "scanStatus"
+  | "scanVerdictJson"
+  | "slug"
+  | "url"
 >;
 
 const shortUrlFor = (appOrigin: string, slug: string) =>
@@ -29,10 +37,13 @@ const formatExpiration = (expiresAt: Date | null) =>
 
 const statusLabel = (link: DashboardLink) => {
   if (link.disabledAt) {
-    return "Disabled";
+    return {
+      estimate: null,
+      label: "Disabled",
+    };
   }
 
-  return link.scanStatus === "clean" ? "Ready" : link.scanStatus;
+  return scanDisplay(link);
 };
 
 const linkRows = (links: DashboardLink[], appOrigin: string) => {
@@ -43,13 +54,17 @@ const linkRows = (links: DashboardLink[], appOrigin: string) => {
   return links
     .map((link) => {
       const shortUrl = shortUrlFor(appOrigin, link.slug);
+      const status = statusLabel(link);
 
       return `<div class="grid grid-cols-[1fr_auto_auto_auto] items-center gap-4 px-6 py-5 text-sm">
         <span class="min-w-0">
           <a class="break-all font-mono hover:underline" href="/links/${escapeAttribute(link.slug)}">${escapeHtml(shortUrl)}</a>
           <span class="mt-2 block break-all text-muted-foreground">${escapeHtml(link.url)}</span>
         </span>
-        <span class="rounded-full bg-secondary px-2 py-1 text-secondary-foreground">${escapeHtml(statusLabel(link))}</span>
+        <span class="grid justify-items-end gap-1">
+          <span class="rounded-full bg-secondary px-2 py-1 text-secondary-foreground">${escapeHtml(status.label)}</span>
+          ${status.estimate ? `<span class="max-w-40 text-right text-xs text-muted-foreground">${escapeHtml(status.estimate)}</span>` : ""}
+        </span>
         <span class="text-muted-foreground">${escapeHtml(formatExpiration(link.expiresAt))}</span>
         <span>${link.clickCount}</span>
       </div>`;
