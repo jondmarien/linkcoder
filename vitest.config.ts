@@ -7,6 +7,11 @@ export default defineConfig({
       wrangler: {
         configPath: "./wrangler.jsonc",
       },
+      miniflare: {
+        bindings: {
+          BETTER_AUTH_SECRET: "test-only-better-auth-secret-32-characters",
+        },
+      },
     }),
   ],
   test: {

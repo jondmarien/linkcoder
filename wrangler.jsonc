@@ -25,12 +25,14 @@
     {
       "binding": "DB",
       "database_name": "chron0-link-shortener",
+      "database_id": "163a3146-d545-4523-8ac3-fcaf70cdc9f4",
       "migrations_dir": "src/db/migrations"
     }
   ],
   "kv_namespaces": [
     {
-      "binding": "LINKS_KV"
+      "binding": "LINKS_KV",
+      "id": "c369438af17640ab8e306a9b458a50ef"
     }
   ],
   "analytics_engine_datasets": [
