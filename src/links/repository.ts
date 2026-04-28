@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { desc, eq, sql } from "drizzle-orm";
 import type { Db } from "../db/client";
 import { links, users } from "../db/schema";
 import { randomSlug } from "./slug";
@@ -39,6 +39,13 @@ export const getLinkWithOwnerBySlug = async (db: Db, slug: string) => {
   };
 };
 
+export const listLinksByUser = async (db: Db, userId: string) =>
+  db
+    .select()
+    .from(links)
+    .where(eq(links.userId, userId))
+    .orderBy(desc(links.createdAt));
+
 export const slugExists = async (db: Db, slug: string) =>
   (await getLinkBySlug(db, slug)) !== null;
 
@@ -76,4 +83,11 @@ export const createLink = async (db: Db, input: CreateLinkInput) => {
   }
 
   return link;
+};
+
+export const incrementLinkClicks = async (db: Db, slug: string) => {
+  await db
+    .update(links)
+    .set({ clickCount: sql`${links.clickCount} + 1` })
+    .where(eq(links.slug, slug));
 };

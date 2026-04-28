@@ -18,7 +18,7 @@ type CreateLinkBody = {
 export const linkRoutes = new Hono<HonoAppEnv>();
 
 linkRoutes.get("/links/new", (c) =>
-  c.html(newLinkPage({ theme: readTheme(c) })),
+  c.html(newLinkPage({ theme: readTheme(c), user: c.get("session")?.user })),
 );
 
 const parseCreateBody = async (request: Request): Promise<CreateLinkBody> => {

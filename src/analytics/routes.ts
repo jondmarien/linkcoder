@@ -58,12 +58,21 @@ analyticsRoutes.get("/links/:slug", async (c) => {
   }
 
   const analytics = await queryLinkAnalytics(c.env, result.slug);
+  const aggregate = {
+    clicks: Math.max(
+      analytics.aggregate.clicks ?? 0,
+      result.link.clickCount ?? 0,
+    ),
+  };
+
   return c.html(
     linkDetailPage({
-      aggregate: analytics.aggregate,
+      aggregate,
+      appOrigin: c.env.APP_ORIGIN,
       link: result.link,
       theme: readTheme(c),
       timeseries: analytics.timeseries,
+      user: c.get("session")?.user,
     }),
   );
 });

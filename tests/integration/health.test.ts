@@ -8,7 +8,10 @@ describe("health endpoint", () => {
 
     expect(response.status).toBe(200);
     expect(response.headers.get("content-type")).toContain("text/html");
+    expect(response.headers.get("cache-control")).toContain("no-transform");
     expect(html).toContain('href="/assets/styles.css"');
+    expect(html).toContain('rel="icon"');
+    expect(html).toContain('href="/favicon.svg"');
     expect(html).toContain("Short links with a longer memory");
     expect(html).toContain("data-theme-toggle");
   });

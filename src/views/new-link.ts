@@ -4,10 +4,22 @@ import { cardClass } from "../ui/card";
 import { fieldClass, inputClass, labelClass } from "../ui/form";
 import { page } from "./layout";
 
-export const newLinkPage = ({ theme }: { theme: Theme }) =>
+type NewLinkUser = {
+  email?: string | null;
+  name?: string | null;
+};
+
+export const newLinkPage = ({
+  theme,
+  user,
+}: {
+  theme: Theme;
+  user?: NewLinkUser | null;
+}) =>
   page({
     title: "Create a short link",
     theme,
+    user,
     body: `<main class="flex flex-1 items-center justify-center py-16">
       <section class="${cardClass("w-full max-w-xl")}">
         <div class="space-y-6 px-6">

@@ -98,6 +98,7 @@ export const links = sqliteTable(
     })
       .notNull()
       .default("pending"),
+    clickCount: integer("click_count").notNull().default(0),
     scanVerdictJson: text("scan_verdict_json"),
     lastScannedAt: timestamp("last_scanned_at"),
   },

@@ -3,7 +3,20 @@ import { dashboardPage } from "../../src/views/dashboard";
 
 describe("dashboard view", () => {
   it("renders a link management skeleton", () => {
-    const html = dashboardPage({ theme: "light" }).toString();
+    const html = dashboardPage({
+      appOrigin: "https://link.chron0.tech",
+      links: [
+        {
+          clickCount: 0,
+          disabledAt: null,
+          expiresAt: null,
+          scanStatus: "clean",
+          slug: "atlas7",
+          url: "https://example.com/",
+        },
+      ],
+      theme: "light",
+    }).toString();
 
     expect(html).toContain("Your links");
     expect(html).toContain("Create a short link");

@@ -6,7 +6,10 @@ import {
   toCachedLink,
   writeSlugCache,
 } from "../links/cache";
-import { getLinkWithOwnerBySlug } from "../links/repository";
+import {
+  getLinkWithOwnerBySlug,
+  incrementLinkClicks,
+} from "../links/repository";
 import { readTheme } from "../theme";
 import type { AppContext } from "../types";
 import { linkStatusPage } from "../views/link-status";
@@ -55,7 +58,7 @@ const renderAwaitingVerification = (c: AppContext) =>
     403,
   );
 
-const redirectCachedLink = (
+const redirectCachedLink = async (
   c: AppContext,
   slug: string,
   cachedLink: CachedLink,
@@ -72,10 +75,12 @@ const redirectCachedLink = (
     return renderExpired(c);
   }
 
+  const resolvedSlug = cachedLink.slug ?? slug;
+  await incrementLinkClicks(createDb(c.env.DB), resolvedSlug);
   writeClickEvent({
     dataset: c.env.ANALYTICS_ENGINE,
     request: c.req.raw,
-    slug: cachedLink.slug ?? slug,
+    slug: resolvedSlug,
   });
 
   return c.redirect(cachedLink.url, 302);
