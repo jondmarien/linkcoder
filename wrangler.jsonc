@@ -37,8 +37,8 @@
   ],
   "analytics_engine_datasets": [
     {
-      "binding": "CLICKS_AE",
-      "dataset": "link_clicks"
+      "binding": "ANALYTICS_ENGINE",
+      "dataset": "analytic_events"
     }
   ],
   "ratelimits": [

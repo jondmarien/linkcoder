@@ -16,14 +16,15 @@ describe("auth routes", () => {
     expect(response.status).toBeLessThan(500);
   });
 
-  it.each(["/login", "/signup", "/verify"])(
-    "renders the %s auth page",
-    async (path) => {
-      const response = await app.request(path, undefined, env);
+  it.each([
+    "/login",
+    "/signup",
+    "/verify",
+  ])("renders the %s auth page", async (path) => {
+    const response = await app.request(path, undefined, env);
 
-      expect(response.status).toBe(200);
-      expect(response.headers.get("content-type")).toContain("text/html");
-      await expect(response.text()).resolves.toContain("chron0");
-    },
-  );
+    expect(response.status).toBe(200);
+    expect(response.headers.get("content-type")).toContain("text/html");
+    await expect(response.text()).resolves.toContain("chron0");
+  });
 });

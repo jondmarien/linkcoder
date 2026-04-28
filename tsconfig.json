@@ -32,6 +32,7 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     "tests/**/*.ts",
+    "tests/**/*.d.ts",
     "vitest.config.ts",
     "worker-configuration.d.ts"
   ]
