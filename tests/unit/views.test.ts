@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { LinkRecord } from "../../src/links/repository";
 import { dashboardPage } from "../../src/views/dashboard";
 import { linkDetailPage } from "../../src/views/link-detail";
+import { newLinkPage } from "../../src/views/new-link";
 
 const link = (overrides: Partial<LinkRecord> = {}): LinkRecord => ({
   clickCount: 1,
@@ -90,5 +91,20 @@ describe("link detail view", () => {
     expect(html).toContain("Estimated finish");
     expect(html).toContain('action="/links/atlas7/rescan"');
     expect(html).toContain("Re-scan");
+  });
+});
+
+describe("new link view", () => {
+  it("makes expiration opt-in with a two-week default", () => {
+    const html = newLinkPage({ theme: "dark" }).toString();
+
+    expect(html).toContain("Set expiration");
+    expect(html).toContain(
+      "Optional. If enabled, defaults to two weeks from now.",
+    );
+    expect(html).toContain("data-expiration-toggle");
+    expect(html).toContain('data-default-expiration="');
+    expect(html).toContain('name="expires_at" type="datetime-local"');
+    expect(html).toContain("disabled");
   });
 });

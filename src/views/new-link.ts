@@ -9,14 +9,21 @@ type NewLinkUser = {
   name?: string | null;
 };
 
+const defaultExpirationValue = () => {
+  const twoWeeksFromNow = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
+  return twoWeeksFromNow.toISOString().slice(0, 16);
+};
+
 export const newLinkPage = ({
   theme,
   user,
 }: {
   theme: Theme;
   user?: NewLinkUser | null;
-}) =>
-  page({
+}) => {
+  const defaultExpiration = defaultExpirationValue();
+
+  return page({
     title: "Create a short link",
     theme,
     user,
@@ -38,12 +45,27 @@ export const newLinkPage = ({
               <input class="${inputClass()}" id="slug" name="slug" placeholder="atlas7">
             </div>
             <div class="${fieldClass()}">
-              <label class="${labelClass()}" for="expires_at">Expiration</label>
-              <input class="${inputClass()}" id="expires_at" name="expires_at" type="datetime-local">
+              <label class="${labelClass("items-center")}" for="expires_enabled">
+                <input id="expires_enabled" type="checkbox" data-expiration-toggle class="size-4 rounded border border-input">
+                <span>Set expiration</span>
+              </label>
+              <input class="${inputClass()}" id="expires_at" name="expires_at" type="datetime-local" value="${defaultExpiration}" data-default-expiration="${defaultExpiration}" disabled>
+              <p class="text-sm text-muted-foreground">Optional. If enabled, defaults to two weeks from now.</p>
             </div>
             <button class="${buttonClass("default")}" type="submit">Create link</button>
           </form>
         </div>
       </section>
+      <script>
+        const expirationToggle = document.querySelector("[data-expiration-toggle]");
+        const expirationInput = document.querySelector("[data-default-expiration]");
+        expirationToggle?.addEventListener("change", () => {
+          expirationInput.disabled = !expirationToggle.checked;
+          if (expirationToggle.checked && !expirationInput.value) {
+            expirationInput.value = expirationInput.dataset.defaultExpiration;
+          }
+        });
+      </script>
     </main>`,
   });
+};

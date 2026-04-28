@@ -194,6 +194,34 @@ describe("link routes", () => {
     expect(html).toContain('data-copy="https://link.chron0.tech/bhacks-copy"');
   });
 
+  it("keeps expiration empty when no expiration is chosen", async () => {
+    const user = await seedAuthenticatedUser("no-expiration-user");
+
+    const response = await app.request(
+      "/api/links",
+      {
+        method: "POST",
+        headers: {
+          ...user.headers,
+          "content-type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+          url: "https://example.com/no-expiration",
+          slug: "no-expire",
+        }),
+      },
+      env,
+    );
+    const row = await env.DB.prepare(
+      "SELECT expires_at FROM links WHERE slug = ?",
+    )
+      .bind("no-expire")
+      .first<{ expires_at: number | null }>();
+
+    expect(response.status).toBe(302);
+    expect(row?.expires_at).toBeNull();
+  });
+
   it("redirects from D1 and writes the KV cache on miss", async () => {
     await seedLink("go1234", "https://example.com/page");
 
