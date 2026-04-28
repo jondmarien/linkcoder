@@ -75,7 +75,7 @@ const metaTags = (meta?: PageMeta) => {
     meta.image
       ? `<meta property="og:image" content="${escapeAttribute(meta.image)}">`
       : "",
-    meta.image ? `<meta property="og:image:type" content="image/svg+xml">` : "",
+    meta.image ? `<meta property="og:image:type" content="image/png">` : "",
     meta.image ? `<meta property="og:image:width" content="1200">` : "",
     meta.image ? `<meta property="og:image:height" content="630">` : "",
     meta.imageAlt

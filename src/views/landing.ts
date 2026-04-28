@@ -26,7 +26,7 @@ export const landingPage = ({
     meta: {
       description:
         "Short links that keep redirects fast at the edge while tracking ownership, review, and click history.",
-      image: new URL("/og-image.svg", appOrigin).toString(),
+      image: new URL("/og-image.png", appOrigin).toString(),
       imageAlt:
         "chron0 links preview card with a short link and edge analytics.",
       title: "Short links with a longer memory.",

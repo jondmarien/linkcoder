@@ -120,6 +120,7 @@ describe("landing view metadata", () => {
     expect(html).toContain('property="og:title"');
     expect(html).toContain('property="og:description"');
     expect(html).toContain('property="og:image"');
+    expect(html).toContain("og-image.png");
     expect(html).toContain('name="twitter:card" content="summary_large_image"');
   });
 });
