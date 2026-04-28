@@ -1,0 +1,26 @@
+{
+  "name": "chron0-link-shortener",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "check": "tsc --noEmit",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "types": "wrangler types"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.13",
+    "@cloudflare/vitest-pool-workers": "^0.15.0",
+    "@types/bun": "latest",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.5",
+    "wrangler": "^4.85.0"
+  },
+  "dependencies": {
+    "hono": "^4.12.15"
+  }
+}

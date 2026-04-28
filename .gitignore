@@ -1,2 +1,6 @@
 /.cursor
 /.vscode
+node_modules/
+dist/
+.wrangler/
+.dev.vars

@@ -1,0 +1,71 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "chron0-link-shortener",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-04-28",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": false,
+  "route": {
+    "pattern": "link.chron0.tech/*",
+    "zone_name": "chron0.tech"
+  },
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  },
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS"
+  },
+  "vars": {
+    "APP_ORIGIN": "https://link.chron0.tech",
+    "ENVIRONMENT": "production"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "chron0-link-shortener",
+      "migrations_dir": "src/db/migrations"
+    }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "LINKS_KV"
+    }
+  ],
+  "analytics_engine_datasets": [
+    {
+      "binding": "CLICKS_AE",
+      "dataset": "link_clicks"
+    }
+  ],
+  "ratelimits": [
+    {
+      "name": "CREATE_LINKS_BY_IP",
+      "namespace_id": "1001",
+      "simple": {
+        "limit": 20,
+        "period": 60
+      }
+    },
+    {
+      "name": "CREATE_LINKS_BY_USER",
+      "namespace_id": "1002",
+      "simple": {
+        "limit": 60,
+        "period": 60
+      }
+    },
+    {
+      "name": "REPORTS_BY_IP",
+      "namespace_id": "1003",
+      "simple": {
+        "limit": 10,
+        "period": 60
+      }
+    }
+  ],
+  "triggers": {
+    "crons": ["0 7 * * *"]
+  }
+}
