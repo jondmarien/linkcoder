@@ -4,6 +4,9 @@
 KV, Analytics Engine, Better Auth, Drizzle, and a server-rendered Tailwind v4
 UI.
 
+<img width="1370" height="895" alt="image" src="https://github.com/user-attachments/assets/2fcbfd5b-26ab-44a7-9147-647980c1665e" />
+
+
 ## Goal
 
 The project is a single Worker that handles the public landing page, auth,
