@@ -1,6 +1,7 @@
 import type { LinkRecord } from "./repository";
 
 export type CachedLink = {
+  slug?: string;
   url: string;
   disabled: boolean;
   expires_at: number | null;
@@ -13,8 +14,10 @@ export const slugCacheKey = (slug: string) => `slug:${slug}`;
 
 export const toCachedLink = (
   link: Pick<LinkRecord, "url" | "disabledAt" | "expiresAt">,
+  slug: string,
   ownerVerified: boolean,
 ): CachedLink => ({
+  slug,
   url: link.url,
   disabled: Boolean(link.disabledAt),
   expires_at: link.expiresAt?.getTime() ?? null,

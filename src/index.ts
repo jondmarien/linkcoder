@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { analyticsRoutes } from "./analytics/routes";
 import {
   type AppVariables,
   requireSession,
@@ -33,6 +34,7 @@ app.get("/dashboard", requireSession, (c) =>
 );
 
 app.route("/", authRoutes);
+app.route("/", analyticsRoutes);
 app.route("/", linkRoutes);
 app.route("/", reportRoutes);
 app.get("/:slug", handleRedirect);

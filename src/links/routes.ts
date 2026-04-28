@@ -117,7 +117,7 @@ linkRoutes.post("/api/links", async (c) => {
   await writeSlugCache(
     c.env.LINKS_KV,
     slug,
-    toCachedLink(link, Boolean(session.user.emailVerified)),
+    toCachedLink(link, slug, Boolean(session.user.emailVerified)),
   );
 
   return c.json(

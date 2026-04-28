@@ -29,8 +29,10 @@ Implemented:
   and anonymous redirect handling with not-found, disabled, and expired pages.
 - Create-time URL scanner integration, email-verification redirect gate, public
   abuse reports, and create/report rate limit enforcement.
+- Redirect click ingestion into Analytics Engine, owner-only analytics API, and
+  link detail pages with uPlot chart scaffolding.
 
-Next planned phase: analytics ingestion and dashboard charts.
+Next planned phase: admin review queue and cron rescans.
 
 ## Architecture
 

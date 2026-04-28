@@ -1,3 +1,4 @@
+import { writeClickEvent } from "../analytics/query";
 import { createDb } from "../db/client";
 import {
   type CachedLink,
@@ -54,7 +55,11 @@ const renderAwaitingVerification = (c: AppContext) =>
     403,
   );
 
-const redirectCachedLink = (c: AppContext, cachedLink: CachedLink) => {
+const redirectCachedLink = (
+  c: AppContext,
+  slug: string,
+  cachedLink: CachedLink,
+) => {
   if (!cachedLink.owner_verified) {
     return renderAwaitingVerification(c);
   }
@@ -66,6 +71,12 @@ const redirectCachedLink = (c: AppContext, cachedLink: CachedLink) => {
   if (isExpired(cachedLink.expires_at)) {
     return renderExpired(c);
   }
+
+  writeClickEvent({
+    dataset: c.env.ANALYTICS_ENGINE,
+    request: c.req.raw,
+    slug: cachedLink.slug ?? slug,
+  });
 
   return c.redirect(cachedLink.url, 302);
 };
@@ -83,7 +94,7 @@ export const handleRedirect = async (c: AppContext) => {
   );
 
   if (cachedLink) {
-    return redirectCachedLink(c, cachedLink);
+    return redirectCachedLink(c, slug, cachedLink);
   }
 
   const link = await getLinkWithOwnerBySlug(createDb(c.env.DB), slug);
@@ -92,8 +103,8 @@ export const handleRedirect = async (c: AppContext) => {
     return renderNotFound(c);
   }
 
-  const nextCachedLink = toCachedLink(link, link.ownerVerified);
+  const nextCachedLink = toCachedLink(link, slug, link.ownerVerified);
   await writeSlugCache(c.env.LINKS_KV, slug, nextCachedLink);
 
-  return redirectCachedLink(c, nextCachedLink);
+  return redirectCachedLink(c, slug, nextCachedLink);
 };

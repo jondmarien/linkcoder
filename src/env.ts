@@ -6,4 +6,5 @@ export type AppEnv = Env & {
   RESEND_FROM_EMAIL?: string;
   CLOUDFLARE_ACCOUNT_ID?: string;
   URL_SCANNER_API_TOKEN?: string;
+  ANALYTICS_API_TOKEN?: string;
 };
