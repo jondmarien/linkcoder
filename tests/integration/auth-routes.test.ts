@@ -108,9 +108,36 @@ describe("auth routes", () => {
 
     expect(response.status).toBe(200);
     expect(html).toContain("Session User");
+    expect(html).toContain("data-account-menu");
+    expect(html).toContain("Log out");
+    expect(html).toContain('action="/logout"');
     expect(html).toContain('href="/links/new">Start shortening</a>');
     expect(html).toContain('href="/dashboard">Dashboard</a>');
     expect(html).not.toContain('href="/signup">Start shortening</a>');
+  });
+
+  it("logs out the current user from the account menu", async () => {
+    const session = await seedAuthenticatedUser("logout-user");
+    const response = await app.request(
+      "/logout",
+      {
+        method: "POST",
+        headers: { cookie: session.cookie },
+      },
+      env,
+    );
+    const remainingSession = await env.DB.prepare(
+      "SELECT id FROM sessions WHERE id = ?",
+    )
+      .bind("session-logout-user")
+      .first();
+
+    expect(response.status).toBe(302);
+    expect(response.headers.get("location")).toBe("/");
+    expect(response.headers.get("set-cookie")).toContain(
+      "better-auth.session_token=",
+    );
+    expect(remainingSession).toBeNull();
   });
 
   it.each([

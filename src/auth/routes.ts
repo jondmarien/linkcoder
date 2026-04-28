@@ -104,6 +104,24 @@ authRoutes.get("/api/auth/sign-in/google", async (c) => {
   return copySetCookieHeaders(response, c.redirect(payload.url));
 });
 
+authRoutes.post("/logout", async (c) => {
+  const origin = c.env.APP_ORIGIN ?? requestOrigin(c.req.raw);
+  const headers = new Headers(c.req.raw.headers);
+  headers.set("origin", origin);
+  const response = await createAuth(c.env, origin).handler(
+    new Request(`${origin}/api/auth/sign-out`, {
+      method: "POST",
+      headers,
+    }),
+  );
+
+  if (!response.ok) {
+    return response;
+  }
+
+  return copySetCookieHeaders(response, c.redirect("/"));
+});
+
 authRoutes.on(["GET", "POST"], "/api/auth/*", (c) =>
   createAuth(c.env, requestOrigin(c.req.raw)).handler(c.req.raw),
 );

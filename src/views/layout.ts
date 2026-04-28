@@ -91,7 +91,20 @@ const accountNav = (user?: LayoutUser | null) => {
   const label = user.name || user.email || "Account";
   const title = user.email || label;
 
-  return `<span class="max-w-48 truncate rounded-md bg-secondary px-3 py-1.5 text-xs font-medium text-secondary-foreground" title="${escapeAttribute(title)}">${escapeHtml(label)}</span>`;
+  return `<details class="relative" data-account-menu>
+    <summary class="flex max-w-48 cursor-pointer list-none items-center gap-2 truncate rounded-md bg-secondary px-3 py-1.5 text-xs font-medium text-secondary-foreground transition hover:bg-secondary/80" title="${escapeAttribute(title)}">
+      <span class="truncate">${escapeHtml(label)}</span>
+      <svg aria-hidden="true" class="size-3" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"></path>
+      </svg>
+    </summary>
+    <div class="absolute right-0 z-10 mt-2 min-w-40 rounded-md border bg-popover p-1 text-popover-foreground shadow-md">
+      <div class="truncate px-2 py-1.5 text-xs text-muted-foreground">${escapeHtml(title)}</div>
+      <form method="post" action="/logout">
+        <button class="w-full rounded-sm px-2 py-1.5 text-left text-sm transition hover:bg-accent hover:text-accent-foreground" type="submit">Log out</button>
+      </form>
+    </div>
+  </details>`;
 };
 
 const metaTags = (meta?: PageMeta) => {
