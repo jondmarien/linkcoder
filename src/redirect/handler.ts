@@ -5,7 +5,7 @@ import {
   toCachedLink,
   writeSlugCache,
 } from "../links/cache";
-import { getLinkBySlug } from "../links/repository";
+import { getLinkWithOwnerBySlug } from "../links/repository";
 import { readTheme } from "../theme";
 import type { AppContext } from "../types";
 import { linkStatusPage } from "../views/link-status";
@@ -43,7 +43,22 @@ const renderDisabled = (c: AppContext) =>
     410,
   );
 
+const renderAwaitingVerification = (c: AppContext) =>
+  c.html(
+    linkStatusPage({
+      title: "Link awaiting verification",
+      message:
+        "This link is awaiting verification. The owner needs to verify their email before redirects are enabled.",
+      theme: readTheme(c),
+    }),
+    403,
+  );
+
 const redirectCachedLink = (c: AppContext, cachedLink: CachedLink) => {
+  if (!cachedLink.owner_verified) {
+    return renderAwaitingVerification(c);
+  }
+
   if (cachedLink.disabled) {
     return renderDisabled(c);
   }
@@ -71,14 +86,13 @@ export const handleRedirect = async (c: AppContext) => {
     return redirectCachedLink(c, cachedLink);
   }
 
-  const link = await getLinkBySlug(createDb(c.env.DB), slug);
+  const link = await getLinkWithOwnerBySlug(createDb(c.env.DB), slug);
 
   if (!link) {
     return renderNotFound(c);
   }
 
-  const ownerVerified = true;
-  const nextCachedLink = toCachedLink(link, ownerVerified);
+  const nextCachedLink = toCachedLink(link, link.ownerVerified);
   await writeSlugCache(c.env.LINKS_KV, slug, nextCachedLink);
 
   return redirectCachedLink(c, nextCachedLink);

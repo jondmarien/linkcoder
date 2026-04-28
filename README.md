@@ -6,7 +6,6 @@ UI.
 
 <img width="1370" height="895" alt="image" src="https://github.com/user-attachments/assets/2fcbfd5b-26ab-44a7-9147-647980c1665e" />
 
-
 ## Goal
 
 The project is a single Worker that handles the public landing page, auth,
@@ -28,8 +27,10 @@ Implemented:
   light/dark theme.
 - Link slug validation, authenticated link creation API, D1/KV write-through,
   and anonymous redirect handling with not-found, disabled, and expired pages.
+- Create-time URL scanner integration, email-verification redirect gate, public
+  abuse reports, and create/report rate limit enforcement.
 
-Next planned phase: abuse controls.
+Next planned phase: analytics ingestion and dashboard charts.
 
 ## Architecture
 

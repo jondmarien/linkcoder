@@ -95,6 +95,21 @@ bunx wrangler secret put GOOGLE_CLIENT_ID
 bunx wrangler secret put GOOGLE_CLIENT_SECRET
 ```
 
+### Cloudflare URL Scanner
+
+Used to submit newly-created destination URLs for abuse review.
+
+Create a custom Cloudflare API token with `Account > URL Scanner > Edit`, then
+set:
+
+```sh
+bunx wrangler secret put CLOUDFLARE_ACCOUNT_ID
+bunx wrangler secret put URL_SCANNER_API_TOKEN
+```
+
+If these are missing, new links are still created, but they are marked
+`suspicious` so they can be reviewed.
+
 ## Local Environment
 
 Copy the example file and fill in local values:

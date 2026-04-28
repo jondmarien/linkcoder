@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import type { Db } from "../db/client";
-import { links } from "../db/schema";
+import { links, users } from "../db/schema";
 import { randomSlug } from "./slug";
 
 export type LinkRecord = typeof links.$inferSelect;
@@ -10,11 +10,33 @@ export type CreateLinkInput = {
   url: string;
   userId: string;
   expiresAt?: Date | null;
+  scanStatus: "pending" | "clean" | "suspicious" | "malicious";
+  scanVerdictJson?: string | null;
 };
 
 export const getLinkBySlug = async (db: Db, slug: string) => {
   const [link] = await db.select().from(links).where(eq(links.slug, slug));
   return link ?? null;
+};
+
+export const getLinkWithOwnerBySlug = async (db: Db, slug: string) => {
+  const [row] = await db
+    .select({
+      link: links,
+      ownerVerified: users.emailVerified,
+    })
+    .from(links)
+    .innerJoin(users, eq(links.userId, users.id))
+    .where(eq(links.slug, slug));
+
+  if (!row) {
+    return null;
+  }
+
+  return {
+    ...row.link,
+    ownerVerified: row.ownerVerified,
+  };
 };
 
 export const slugExists = async (db: Db, slug: string) =>
@@ -43,7 +65,9 @@ export const createLink = async (db: Db, input: CreateLinkInput) => {
       userId: input.userId,
       createdAt: now,
       expiresAt: input.expiresAt ?? null,
-      scanStatus: "clean",
+      scanStatus: input.scanStatus,
+      scanVerdictJson: input.scanVerdictJson ?? null,
+      lastScannedAt: now,
     })
     .returning();
 

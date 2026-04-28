@@ -1,8 +1,10 @@
 import { Hono } from "hono";
 import { createDb } from "../db/client";
+import { checkRateLimit, getClientIp } from "../rate-limit";
 import type { HonoAppEnv } from "../types";
 import { toCachedLink, writeSlugCache } from "./cache";
 import { createLink, generateUniqueSlug, slugExists } from "./repository";
+import { scanDestinationUrl } from "./scan";
 import { isValidCustomSlug, normalizeDestinationUrl } from "./slug";
 
 type CreateLinkBody = {
@@ -33,6 +35,24 @@ linkRoutes.post("/api/links", async (c) => {
 
   if (!session) {
     return c.json({ error: "Authentication required." }, 401);
+  }
+
+  const ipLimit = await checkRateLimit(
+    c.env.CREATE_LINKS_BY_IP,
+    `create:${getClientIp(c.req.raw.headers)}`,
+  );
+
+  if (ipLimit) {
+    return ipLimit;
+  }
+
+  const userLimit = await checkRateLimit(
+    c.env.CREATE_LINKS_BY_USER,
+    `create:${session.user.id}`,
+  );
+
+  if (userLimit) {
+    return userLimit;
   }
 
   const body = await parseCreateBody(c.req.raw);
@@ -70,11 +90,29 @@ linkRoutes.post("/api/links", async (c) => {
     return c.json({ error: "Expiration date is invalid." }, 400);
   }
 
+  const scan = await scanDestinationUrl({
+    env: c.env,
+    fetcher: fetch,
+    url,
+  });
+
+  if (scan.status === "malicious") {
+    return c.json(
+      {
+        error: "Destination URL was rejected by the abuse scanner.",
+        scan,
+      },
+      400,
+    );
+  }
+
   const link = await createLink(db, {
     slug,
     url,
     userId: session.user.id,
     expiresAt,
+    scanStatus: scan.status,
+    scanVerdictJson: JSON.stringify(scan.verdict),
   });
   await writeSlugCache(
     c.env.LINKS_KV,
@@ -89,6 +127,7 @@ linkRoutes.post("/api/links", async (c) => {
       url: link.url,
       short_url: `${c.env.APP_ORIGIN}/${link.slug}`,
       expires_at: link.expiresAt?.toISOString() ?? null,
+      scan_status: link.scanStatus,
     },
     201,
   );

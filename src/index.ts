@@ -8,6 +8,7 @@ import { authRoutes } from "./auth/routes";
 import type { AppEnv } from "./env";
 import { linkRoutes } from "./links/routes";
 import { handleRedirect } from "./redirect/handler";
+import { reportRoutes } from "./reports/routes";
 import { readTheme, writeTheme } from "./theme";
 import { loginPage, signupPage, verifyPage } from "./views/auth";
 import { dashboardPage } from "./views/dashboard";
@@ -33,6 +34,7 @@ app.get("/dashboard", requireSession, (c) =>
 
 app.route("/", authRoutes);
 app.route("/", linkRoutes);
+app.route("/", reportRoutes);
 app.get("/:slug", handleRedirect);
 
 export default app;
