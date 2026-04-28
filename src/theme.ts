@@ -15,7 +15,7 @@ export const writeTheme = <E extends { Bindings: AppEnv }>(
   setCookie(c, "theme", theme, {
     httpOnly: true,
     sameSite: "Lax",
-    secure: c.env.ENVIRONMENT === "production",
+    secure: c.env?.ENVIRONMENT === "production",
     path: "/",
     maxAge: 60 * 60 * 24 * 365,
   });

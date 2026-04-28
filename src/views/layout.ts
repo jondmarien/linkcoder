@@ -27,14 +27,61 @@ type LayoutOptions = {
 const themeToggle = (theme: Theme) => {
   const nextTheme = theme === "dark" ? "light" : "dark";
   const label = theme === "dark" ? "Switch to light" : "Switch to dark";
+  const sunClass = theme === "dark" ? "" : "hidden";
+  const moonClass = theme === "dark" ? "hidden" : "";
 
   return `<form method="post" action="/theme" data-theme-toggle>
     <input type="hidden" name="theme" value="${nextTheme}">
     <button class="${buttonClass("ghost", "icon")}" aria-label="${label}" title="${label}">
-      <span aria-hidden="true">${theme === "dark" ? "Moon" : "Sun"}</span>
+      <svg data-theme-icon-sun class="${sunClass}" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="4"></circle>
+        <path d="M12 2v2"></path>
+        <path d="M12 20v2"></path>
+        <path d="m4.93 4.93 1.41 1.41"></path>
+        <path d="m17.66 17.66 1.41 1.41"></path>
+        <path d="M2 12h2"></path>
+        <path d="M20 12h2"></path>
+        <path d="m6.34 17.66-1.41 1.41"></path>
+        <path d="m19.07 4.93-1.41 1.41"></path>
+      </svg>
+      <svg data-theme-icon-moon class="${moonClass}" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20.99 13.37A8 8 0 1 1 10.63 3.01 6.5 6.5 0 0 0 20.99 13.37Z"></path>
+      </svg>
     </button>
   </form>`;
 };
+
+const themeToggleScript = () => `<script>
+  document.querySelectorAll("[data-theme-toggle]").forEach((form) => {
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const input = form.querySelector("input[name='theme']");
+      const button = form.querySelector("button");
+      const nextTheme = input?.value === "dark" ? "dark" : "light";
+
+      const response = await fetch("/theme", {
+        method: "POST",
+        body: new FormData(form),
+        headers: { "x-theme-toggle": "fetch" },
+      });
+
+      if (!response.ok) {
+        form.submit();
+        return;
+      }
+
+      const isDark = nextTheme === "dark";
+      document.documentElement.classList.toggle("dark", isDark);
+      input.value = isDark ? "light" : "dark";
+
+      const label = isDark ? "Switch to light" : "Switch to dark";
+      button?.setAttribute("aria-label", label);
+      button?.setAttribute("title", label);
+      form.querySelector("[data-theme-icon-sun]")?.classList.toggle("hidden", !isDark);
+      form.querySelector("[data-theme-icon-moon]")?.classList.toggle("hidden", isDark);
+    });
+  });
+</script>`;
 
 const accountNav = (user?: LayoutUser | null) => {
   if (!user) {
@@ -127,5 +174,6 @@ export const page = ({
       </header>
       ${body}
     </div>
+    ${themeToggleScript()}
   </body>
 </html>`;

@@ -21,6 +21,11 @@ describe("health endpoint", () => {
     expect(html).toContain('href="https://link.chron0.tech/"');
     expect(html).toContain("Short links with a longer memory");
     expect(html).toContain("data-theme-toggle");
+    expect(html).toContain("data-theme-icon-sun");
+    expect(html).toContain("data-theme-icon-moon");
+    expect(html).toContain('fetch("/theme"');
+    expect(html).not.toContain(">Sun</span>");
+    expect(html).not.toContain(">Moon</span>");
   });
 
   it("renders the dark theme from the theme cookie", async () => {
@@ -29,6 +34,20 @@ describe("health endpoint", () => {
     });
 
     expect(await response.text()).toContain('<html lang="en" class="dark">');
+  });
+
+  it("supports async theme toggles without forcing navigation", async () => {
+    const response = await app.request("/theme", {
+      method: "POST",
+      headers: {
+        "content-type": "application/x-www-form-urlencoded",
+        "x-theme-toggle": "fetch",
+      },
+      body: new URLSearchParams({ theme: "dark" }),
+    });
+
+    expect(response.status).toBe(204);
+    expect(response.headers.get("set-cookie")).toContain("theme=dark");
   });
 
   it("returns ok JSON for /healthz", async () => {

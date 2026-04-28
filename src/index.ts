@@ -68,6 +68,9 @@ app.get("/sitemap.xml", (c) =>
 app.post("/theme", async (c) => {
   const body = await c.req.parseBody();
   writeTheme(c, body.theme === "dark" ? "dark" : "light");
+  if (c.req.header("x-theme-toggle") === "fetch") {
+    return c.body(null, 204);
+  }
   return c.redirect(c.req.header("referer") ?? "/");
 });
 app.get("/dashboard", requireSession, async (c) => {
