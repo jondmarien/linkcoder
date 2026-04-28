@@ -6,6 +6,8 @@ import {
 } from "./auth/middleware";
 import { authRoutes } from "./auth/routes";
 import type { AppEnv } from "./env";
+import { linkRoutes } from "./links/routes";
+import { handleRedirect } from "./redirect/handler";
 import { readTheme, writeTheme } from "./theme";
 import { loginPage, signupPage, verifyPage } from "./views/auth";
 import { dashboardPage } from "./views/dashboard";
@@ -30,5 +32,7 @@ app.get("/dashboard", requireSession, (c) =>
 );
 
 app.route("/", authRoutes);
+app.route("/", linkRoutes);
+app.get("/:slug", handleRedirect);
 
 export default app;

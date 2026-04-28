@@ -23,8 +23,10 @@ Implemented:
   sessions.
 - Server-rendered landing page, auth pages, dashboard shell, and cookie-backed
   light/dark theme.
+- Link slug validation, authenticated link creation API, D1/KV write-through,
+  and anonymous redirect handling with not-found, disabled, and expired pages.
 
-Next planned phase: link creation and redirect MVP.
+Next planned phase: abuse controls.
 
 ## Architecture
 

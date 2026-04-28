@@ -9,20 +9,18 @@ export type AppVariables = {
   session: Session;
 };
 
-const shouldSkipSession = (path: string) =>
-  path === "/" ||
-  path === "/healthz" ||
-  path === "/login" ||
-  path === "/signup" ||
-  path === "/verify" ||
-  path.startsWith("/api/auth/") ||
-  path.startsWith("/assets/");
+const shouldLoadSession = (path: string) =>
+  path === "/dashboard" ||
+  path.startsWith("/links") ||
+  path.startsWith("/api/links") ||
+  path.startsWith("/api/analytics") ||
+  path.startsWith("/admin");
 
 export const sessionMiddleware = createMiddleware<{
   Bindings: AppEnv;
   Variables: AppVariables;
 }>(async (c, next) => {
-  if (shouldSkipSession(c.req.path)) {
+  if (!shouldLoadSession(c.req.path)) {
     return next();
   }
 
